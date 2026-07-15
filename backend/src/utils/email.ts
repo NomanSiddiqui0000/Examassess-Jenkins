@@ -72,7 +72,11 @@ function getTransporter(): Mail {
 }
 
 const getEmailFrom = () => getSmtpConfig().from;
+<<<<<<< HEAD
 const getFrontendUrl = () => envValue('FRONTEND_URL', 'APP_URL') || 'https://examassess-exam-bt2dei-582625-34-153-65-85.sslip.io';
+=======
+const getFrontendUrl = () => envValue('FRONTEND_URL', 'APP_URL') || 'https://www.examassess.com';
+>>>>>>> 0b4a843eb6ccee7c2a76a6a596025980fc2df971
 const getInvitationLoginUrl = () => envValue('INVITATION_LOGIN_URL') || `${getFrontendUrl().replace(/\/$/, '')}/login`;
 const escapeHtml = (value: unknown) => String(value ?? '')
     .replace(/&/g, '&amp;')

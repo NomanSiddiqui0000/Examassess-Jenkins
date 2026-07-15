@@ -23,7 +23,7 @@ function getSmtpConfig() {
         secure: secureEnv ? secureEnv === 'true' : port === 465,
         user: envValue('SMTP_USER', 'SMTP_USERNAME', 'BREVO_SMTP_USER', 'BREVO_SMTP_LOGIN'),
         pass: envValue('SMTP_PASS', 'SMTP_PASSWORD', 'BREVO_SMTP_PASS', 'BREVO_SMTP_KEY', 'BREVO_API_KEY'),
-        from: envValue('EMAIL_FROM', 'SMTP_FROM', 'BREVO_EMAIL_FROM') || 'ExamAssess <noreply@uniassess.live>',
+        from: envValue('EMAIL_FROM', 'SMTP_FROM', 'BREVO_EMAIL_FROM') || 'ExamAssess <noreply@examassess.sslip.io>',
     };
 }
 
@@ -72,7 +72,7 @@ function getTransporter(): Mail {
 }
 
 const getEmailFrom = () => getSmtpConfig().from;
-const getFrontendUrl = () => envValue('FRONTEND_URL', 'APP_URL') || 'https://uniassess.live';
+const getFrontendUrl = () => envValue('FRONTEND_URL', 'APP_URL') || 'https://examassess-exam-bt2dei-582625-34-153-65-85.sslip.io';
 const getInvitationLoginUrl = () => envValue('INVITATION_LOGIN_URL') || `${getFrontendUrl().replace(/\/$/, '')}/login`;
 const escapeHtml = (value: unknown) => String(value ?? '')
     .replace(/&/g, '&amp;')

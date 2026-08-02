@@ -103,12 +103,12 @@ pipeline {
                     }
 
                     // Check API port
-                    def response = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://localhost:5000 || echo "FAILED"', returnStdout: true).trim()
+                    def response = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health || echo "FAILED"', returnStdout: true).trim()
                     
-                    if (response == 'FAILED' || response == '000') {
-                        error("Health check failed: Application is not reachable on port 5000. (HTTP Code: ${response})")
+                    if (response != '200') {
+                        error("Health check failed: Application is not returning HTTP 200 on port 5000. (Response: ${response})")
                     } else {
-                        echo "Health check passed! Application responded with HTTP ${response}."
+                        echo "Health check passed! Application responded with HTTP 200."
                     }
                 }
             }

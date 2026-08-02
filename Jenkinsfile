@@ -138,12 +138,10 @@ pipeline {
             }
         }
         always {
-            stage('Cleanup') {
-                script {
-                    echo 'Cleaning up dangling Docker images and unused build cache to optimize disk space...'
-                    // Remove dangling images, but DO NOT remove volumes
-                    sh 'docker image prune -f'
-                }
+            script {
+                echo 'Cleaning up dangling Docker images and unused build cache to optimize disk space...'
+                // Remove dangling images, but DO NOT remove volumes
+                sh 'docker image prune -f'
             }
         }
     }

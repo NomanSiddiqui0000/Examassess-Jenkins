@@ -6,3 +6,5 @@ backend/node_modules
 dist
 backend/frontend/dist
 backend/dist
+backend/teacher-profiles
+backend/teacher-images

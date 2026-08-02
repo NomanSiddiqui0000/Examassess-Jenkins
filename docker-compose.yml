@@ -5,10 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: uniassess-app:latest
     container_name: uniassess-app
     restart: unless-stopped
     ports:
       - "5000:5000"
+    volumes:
+      - ./backend/teacher-profiles:/app/backend/teacher-profiles
+      - ./backend/teacher-images:/app/backend/teacher-images
     environment:
       - NODE_ENV=production
       - PORT=5000

@@ -9,6 +9,20 @@ export interface IUserModules {
     teacherAssessments: boolean;
 }
 
+export interface INotificationPreferences {
+    emailOnStudentJoin: boolean;
+    emailOnAssessmentEnd: boolean;
+    emailOnAssessmentCreated: boolean;
+}
+
+export interface IPrivacySettings {
+    showProfileImage: boolean;
+    showProfessionalTitle: boolean;
+    showOrganization: boolean;
+    showSubjects: boolean;
+    showBio: boolean;
+}
+
 export interface IUser extends Document {
     username: string;
     email?: string;
@@ -38,6 +52,8 @@ export interface IUser extends Document {
     organization?: string;
     subjects?: string;
     bio?: string;
+    notificationPreferences?: INotificationPreferences;
+    privacySettings?: IPrivacySettings;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -142,6 +158,18 @@ const UserSchema = new Schema<IUser>(
             type: String,
             trim: true,
             maxlength: 200,
+        },
+        notificationPreferences: {
+            emailOnStudentJoin: { type: Boolean, default: true },
+            emailOnAssessmentEnd: { type: Boolean, default: true },
+            emailOnAssessmentCreated: { type: Boolean, default: true },
+        },
+        privacySettings: {
+            showProfileImage: { type: Boolean, default: true },
+            showProfessionalTitle: { type: Boolean, default: true },
+            showOrganization: { type: Boolean, default: true },
+            showSubjects: { type: Boolean, default: true },
+            showBio: { type: Boolean, default: true },
         },
     },
     {

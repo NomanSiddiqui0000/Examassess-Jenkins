@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserLayout from '../../components/Layout/UserLayout';
 import './QuizResult.css';
@@ -7,144 +7,26 @@ interface ResultData {
     id: string;
     score: number;
     totalMarks: number;
-    passed: boolean;
+    passed: boolean | string | number;
     timeTaken: number;
     correctAnswers: number;
     totalQuestions: number;
     passingMarks: number;
     percentage: number;
+    submittedAt?: string | Date;
+    subject?: string;
+    teacher?: string;
+    duration?: number;
+    attemptNumber?: number;
+    attemptCount?: number;
     hidden?: boolean;
 }
 
-// ─── Animated Circular Progress ───────────────────────────────────────────────
-const RADIUS = 54;
-const STROKE = 10;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-const SIZE = 160;
-const CENTER = SIZE / 2;
-
-interface CircleProps {
-    percentage: number;
-    passed: boolean;
-}
-
-const ResultCircle: React.FC<CircleProps> = ({ percentage, passed }) => {
-    const [animatedDash, setAnimatedDash] = useState(0);
-    const [showIcon, setShowIcon] = useState(false);
-    const hasAnimated = useRef(false);
-
-    useEffect(() => {
-        if (hasAnimated.current) return;
-        hasAnimated.current = true;
-
-        // Phase 1: animate the arc (1s)
-        const targetDash = (percentage / 100) * CIRCUMFERENCE;
-        const startTime = performance.now();
-        const duration = 1000;
-
-        const animateArc = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            // ease-out cubic
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setAnimatedDash(eased * targetDash);
-            if (progress < 1) {
-                requestAnimationFrame(animateArc);
-            } else {
-                // Phase 2: show icon after arc completes
-                setTimeout(() => setShowIcon(true), 100);
-            }
-        };
-
-        requestAnimationFrame(animateArc);
-    }, [percentage]);
-
-    const passColor = '#10b981';
-    const failColor = '#ef4444';
-    const arcColor = passed ? passColor : failColor;
-
-    return (
-        <div className="result-circle-wrap">
-            <svg
-                width={SIZE}
-                height={SIZE}
-                viewBox={`0 0 ${SIZE} ${SIZE}`}
-                className="result-circle-svg"
-            >
-                {/* Track */}
-                <circle
-                    cx={CENTER}
-                    cy={CENTER}
-                    r={RADIUS}
-                    fill="none"
-                    stroke="rgba(255,255,255,0.12)"
-                    strokeWidth={STROKE}
-                />
-                {/* Animated arc — starts at top (−90°) */}
-                <circle
-                    cx={CENTER}
-                    cy={CENTER}
-                    r={RADIUS}
-                    fill="none"
-                    stroke={arcColor}
-                    strokeWidth={STROKE}
-                    strokeLinecap="round"
-                    strokeDasharray={`${animatedDash} ${CIRCUMFERENCE}`}
-                    strokeDashoffset={CIRCUMFERENCE * 0.25}
-                    style={{ filter: `drop-shadow(0 0 6px ${arcColor}88)` }}
-                />
-
-                {/* Percentage text */}
-                <text
-                    x={CENTER}
-                    y={CENTER - 8}
-                    textAnchor="middle"
-                    fill="white"
-                    fontSize="26"
-                    fontWeight="800"
-                    fontFamily="Outfit, sans-serif"
-                >
-                    {percentage}%
-                </text>
-                <text
-                    x={CENTER}
-                    y={CENTER + 12}
-                    textAnchor="middle"
-                    fill="rgba(255,255,255,0.6)"
-                    fontSize="11"
-                    fontFamily="Inter, sans-serif"
-                    fontWeight="500"
-                    letterSpacing="1"
-                >
-                    SCORE
-                </text>
-            </svg>
-
-            {/* Pass tick / Fail cross — rendered outside SVG for CSS animation */}
-            <div className={`result-icon-badge ${passed ? 'pass' : 'fail'} ${showIcon ? 'visible' : ''}`}>
-                {passed ? (
-                    // Animated SVG tick
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-tick">
-                        <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                ) : (
-                    // Animated SVG cross
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-cross">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                )}
-            </div>
-        </div>
-    );
-};
-
-// ─── Main Component ───────────────────────────────────────────────────────────
 const QuizResult: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const result: ResultData = location.state?.result;
-    const quizTitle: string = location.state?.quizTitle || 'Quiz';
+    const quizTitle: string = location.state?.quizTitle || 'Assessment Result';
 
     if (!result) {
         navigate('/user/dashboard');
@@ -154,14 +36,23 @@ const QuizResult: React.FC = () => {
     if (result.hidden) {
         return (
             <UserLayout>
-                <div className="result-page">
-                    <div className="result-card">
-                        <div className="result-status pass">Assessment Submitted Successfully</div>
-                        <p className="result-message">
-                            Thank you for completing the assessment. Your responses have been submitted successfully.
-                        </p>
-                        <div className="result-actions">
-                            <button className="btn btn-accent btn-lg" onClick={() => navigate('/user/dashboard')}>
+                <div className="result-page-wrapper">
+                    <div className="result-page-container" style={{ maxWidth: 600, marginTop: 40 }}>
+                        <div className="result-section-panel" style={{ textAlign: 'center', padding: '40px 32px' }}>
+                            <div className="result-status-pill pass" style={{ marginBottom: 20 }}>
+                                <span>Assessment Submitted</span>
+                            </div>
+                            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 24, margin: '0 0 12px 0', color: '#0f172a' }}>
+                                Responses Successfully Recorded
+                            </h2>
+                            <p style={{ fontSize: 15, color: '#64748b', lineHeight: 1.6, margin: '0 0 28px 0' }}>
+                                Thank you for completing the assessment. Your answers have been received and submitted for grading.
+                            </p>
+                            <button
+                                type="button"
+                                className="btn-result-primary"
+                                onClick={() => navigate('/user/dashboard')}
+                            >
                                 Back to Dashboard
                             </button>
                         </div>
@@ -171,88 +62,235 @@ const QuizResult: React.FC = () => {
         );
     }
 
-    // Derive all values strictly from backend result — no assumptions
+    // ── Derive values strictly from backend result ──
     const percentage = result.percentage ?? (
         result.totalMarks > 0 ? Math.round((result.score / result.totalMarks) * 100) : 0
     );
-    const incorrectAnswers = result.totalQuestions - result.correctAnswers;
+    const incorrectAnswers = Math.max(0, (result.totalQuestions ?? 0) - (result.correctAnswers ?? 0));
+
+    // Robust pass/fail normalization to ensure UI always matches backend evaluation exactly
+    const rawPassed = result.passed ?? (result as any).isPassed ?? (result as any).status;
+    const passedStr = String(rawPassed ?? '').toLowerCase().trim();
+    const isPassed = Boolean(
+        rawPassed === true ||
+        rawPassed === 1 ||
+        passedStr === 'true' ||
+        passedStr === '1' ||
+        passedStr === 'pass' ||
+        passedStr === 'passed' ||
+        passedStr === 'success' ||
+        passedStr.startsWith('pass')
+    );
+
+    // Dynamic attempt count: use provided number or display "Single Attempt" if unsupported/absent
+    const attemptVal = result.attemptNumber ?? result.attemptCount ?? (result as any).submissionNumber;
+    const attemptDisplay = (attemptVal !== undefined && attemptVal !== null && Number(attemptVal) > 0)
+        ? `#${attemptVal}`
+        : 'Single Attempt';
+
     const formatTime = (s: number) => {
+        if (!s || s <= 0) return '0m 00s';
         const m = Math.floor(s / 60);
         const sec = s % 60;
         return `${m}m ${String(sec).padStart(2, '0')}s`;
     };
 
-    const stats = [
-        { label: 'Marks Scored', value: `${result.score} / ${result.totalMarks}`, highlight: false },
-        { label: 'Passing Marks', value: result.passingMarks, highlight: false },
-        { label: 'Correct', value: result.correctAnswers, highlight: true, color: '#10b981' },
-        { label: 'Incorrect', value: incorrectAnswers, highlight: true, color: '#ef4444' },
-        { label: 'Questions', value: result.totalQuestions, highlight: false },
-        { label: 'Time Taken', value: formatTime(result.timeTaken), highlight: false },
-    ];
+    const formatDate = (dateVal?: string | Date) => {
+        if (!dateVal) return new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        try {
+            return new Date(dateVal).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        } catch {
+            return 'Recently';
+        }
+    };
+
+    // Derive professional performance level from percentage
+    const getPerformanceLevel = (pct: number) => {
+        if (pct >= 90) return 'Excellent';
+        if (pct >= 75) return 'Very Good';
+        if (pct >= 60) return 'Good';
+        return 'Needs Improvement';
+    };
 
     return (
         <UserLayout>
-            <div className="result-page">
-                <div className={`result-card ${result.passed ? 'pass' : 'fail'}`}>
+            <div className="result-page-wrapper">
+                <div className="result-page-container">
 
-                    {/* Quiz title */}
-                    <div className="result-quiz-title">{quizTitle}</div>
-
-                    {/* Pass / Fail badge */}
-                    <div className={`result-status-badge ${result.passed ? 'pass' : 'fail'}`}>
-                        {result.passed ? 'PASSED' : 'FAILED'}
-                    </div>
-
-                    {/* Animated circular progress with icon */}
-                    <ResultCircle percentage={percentage} passed={result.passed} />
-
-                    {/* Stats grid */}
-                    <div className="result-stats">
-                        {stats.map((s) => (
-                            <div className="result-stat" key={s.label}>
-                                <div
-                                    className="result-stat-value"
-                                    style={s.highlight ? { color: s.color } : undefined}
-                                >
-                                    {s.value}
-                                </div>
-                                <div className="result-stat-label">{s.label}</div>
+                    {/* 1. Hero Result Section (ExamAssess Primary Blue) */}
+                    <header className="result-hero">
+                        <div className="result-hero-left">
+                            <span className="result-hero-subtitle">Assessment Completed</span>
+                            <h1 className="result-hero-title">{quizTitle}</h1>
+                            <div className="result-hero-meta">
+                                <span>Completed on: <strong>{formatDate(result.submittedAt)}</strong></span>
+                                <span>•</span>
+                                <span>Total Questions: <strong>{result.totalQuestions ?? 0}</strong></span>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                        <div className="result-hero-right">
+                            <div className="result-hero-score-badge">
+                                <span className="result-hero-score-val">{percentage}%</span>
+                                <span className="result-hero-score-lbl">Final Score</span>
+                            </div>
+                            <div className={`result-status-pill ${isPassed ? 'pass' : 'fail'}`}>
+                                {isPassed ? (
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                ) : (
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18" />
+                                        <line x1="6" y1="6" x2="18" y2="18" />
+                                    </svg>
+                                )}
+                                <span>{isPassed ? 'PASSED' : 'FAILED'}</span>
+                            </div>
+                        </div>
+                    </header>
 
-                    {/* Contextual message */}
-                    <div className={`result-message ${result.passed ? 'pass' : 'fail'}`}>
-                        {result.passed
-                            ? `Congratulations! You passed with ${percentage}%. Well done!`
-                            : `You scored ${percentage}%. You needed ${result.passingMarks} marks to pass. Keep practicing!`
-                        }
-                    </div>
+                    {/* 2. Professional Score Display Panel */}
+                    <section className="result-score-panel">
+                        <div className="score-metric-box">
+                            <span className="score-metric-lbl">Score Percentage</span>
+                            <span className={`score-metric-val ${isPassed ? 'pass-text' : 'fail-text'}`}>{percentage}%</span>
+                        </div>
+                        <div className="score-metric-box">
+                            <span className="score-metric-lbl">Marks Obtained</span>
+                            <span className="score-metric-val">{result.score ?? 0} / {result.totalMarks ?? 0}</span>
+                        </div>
+                        <div className="score-metric-box">
+                            <span className="score-metric-lbl">Performance Level</span>
+                            <span className="score-metric-val" style={{ fontSize: 24 }}>{getPerformanceLevel(percentage)}</span>
+                        </div>
+                        <div className="score-metric-box">
+                            <span className="score-metric-lbl">Status Badge</span>
+                            <span className={`score-metric-val ${isPassed ? 'pass-text' : 'fail-text'}`} style={{ fontSize: 24 }}>
+                                {isPassed ? 'Passed' : 'Failed'}
+                            </span>
+                        </div>
+                    </section>
 
-                    {/* Actions */}
-                    <div className="result-actions">
-                        <button
-                            className="btn btn-secondary btn-lg"
-                            onClick={() => navigate('/user/results')}
-                        >
-                            View All Results
-                        </button>
-                        {result.id && (
+                    {/* 3. Performance Feedback Section (Neutral White Card) */}
+                    <section className={`result-feedback-box ${isPassed ? 'pass' : 'fail'}`}>
+                        <div className="feedback-content">
+                            <h4>{isPassed ? 'Excellent Work!' : 'Keep Practicing'}</h4>
+                            <p>
+                                {isPassed
+                                    ? 'You successfully passed this assessment. You have demonstrated strong comprehension of the subject matter. Keep maintaining this level of performance in your upcoming learning modules.'
+                                    : 'You did not meet the required passing score for this assessment. We recommend reviewing the incorrect answers to identify knowledge gaps, studying the course material, and attempting again. Practice makes progress.'}
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* 4. Professional Information Layout Grid */}
+                    <section className="result-section-panel">
+                        <div className="result-section-header">
+                            <h3 className="result-section-title">Performance Metrics</h3>
+                        </div>
+                        <div className="result-metrics-grid">
+                            <div className="result-metric-card">
+                                <span className="result-metric-card-val">{result.score ?? 0} / {result.totalMarks ?? 0}</span>
+                                <span className="result-metric-card-lbl">Marks Obtained</span>
+                            </div>
+                            <div className="result-metric-card">
+                                <span className="result-metric-card-val">{result.passingMarks ?? 'N/A'}</span>
+                                <span className="result-metric-card-lbl">Passing Threshold</span>
+                            </div>
+                            <div className="result-metric-card">
+                                <span className="result-metric-card-val green">{result.correctAnswers ?? 0}</span>
+                                <span className="result-metric-card-lbl">Correct Answers</span>
+                            </div>
+                            <div className="result-metric-card">
+                                <span className="result-metric-card-val orange">{incorrectAnswers}</span>
+                                <span className="result-metric-card-lbl">Incorrect Answers</span>
+                            </div>
+                            <div className="result-metric-card">
+                                <span className="result-metric-card-val">{result.totalQuestions ?? 0}</span>
+                                <span className="result-metric-card-lbl">Total Questions</span>
+                            </div>
+                            <div className="result-metric-card">
+                                <span className="result-metric-card-val">{formatTime(result.timeTaken ?? 0)}</span>
+                                <span className="result-metric-card-lbl">Time Taken</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* 5. Assessment Summary Panel */}
+                    <section className="result-section-panel">
+                        <div className="result-section-header">
+                            <h3 className="result-section-title">Assessment Summary</h3>
+                        </div>
+                        <div className="result-summary-grid">
+                            <div className="summary-row">
+                                <span className="summary-row-lbl">Quiz Name</span>
+                                <span className="summary-row-val">{quizTitle}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-row-lbl">Subject / Category</span>
+                                <span className="summary-row-val">{result.subject || (result as any).category || 'General Assessment'}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-row-lbl">Duration</span>
+                                <span className="summary-row-val">{result.duration ? `${result.duration} mins` : formatTime(result.timeTaken ?? 0)}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-row-lbl">Attempt Information</span>
+                                <span className="summary-row-val">{attemptDisplay}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-row-lbl">Completed At</span>
+                                <span className="summary-row-val">{formatDate(result.submittedAt)}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-row-lbl">Result Status</span>
+                                <span className="summary-row-val" style={{ color: isPassed ? '#10b981' : '#F5820D', fontWeight: 700 }}>
+                                    {isPassed ? 'Passed' : 'Failed'}
+                                </span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-row-lbl">Passing Threshold</span>
+                                <span className="summary-row-val">{result.passingMarks ?? 'N/A'}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-row-lbl">Completion Status</span>
+                                <span className="summary-row-val">Completed & Graded</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* 6. Next Actions Bar */}
+                    <section className="result-actions-bar">
+                        <span className="actions-bar-info">
+                            {isPassed ? 'You have completed this assessment requirement.' : 'You may review your responses or return to the dashboard.'}
+                        </span>
+                        <div className="actions-bar-buttons">
                             <button
-                                className="btn btn-primary btn-lg"
-                                onClick={() => navigate(`/user/review/${result.id}`)}
+                                type="button"
+                                className="btn-result-secondary"
+                                onClick={() => navigate('/user/results')}
                             >
-                                Review Answers
+                                View All Results
                             </button>
-                        )}
-                        <button
-                            className="btn btn-accent btn-lg"
-                            onClick={() => navigate('/user/dashboard')}
-                        >
-                            Back to Dashboard
-                        </button>
-                    </div>
+                            <button
+                                type="button"
+                                className="btn-result-secondary"
+                                onClick={() => navigate('/user/dashboard')}
+                            >
+                                Back to Dashboard
+                            </button>
+                            {result.id && (
+                                <button
+                                    type="button"
+                                    className="btn-result-primary"
+                                    onClick={() => navigate(`/user/review/${result.id}`)}
+                                >
+                                    Review Answers
+                                </button>
+                            )}
+                        </div>
+                    </section>
+
                 </div>
             </div>
         </UserLayout>

@@ -73,7 +73,7 @@ interface DashboardData {
         upcomingAssessments: number;
         submittedAttempts: number;
         classroomCount: number;
-        classrooms: { id: string; name: string; teacherName: string }[];
+        classrooms: { id: string; name: string; teacherName: string; teacher?: any }[];
         nextAssessment: {
             id: string; name: string; classroom: string;
             startTime: string; endTime: string; durationMinutes: number; totalQuestions: number;
@@ -665,11 +665,25 @@ const UserDashboard: React.FC = () => {
                                                 </div>
                                                 <div className="ud-classrooms">
                                                     {dashData.classroomStats.classrooms.map(c => (
-                                                        <div key={c.id} className="ud-classroom-item">
-                                                            <div className="ud-classroom-avatar">{c.name.charAt(0).toUpperCase()}</div>
+                                                        <div
+                                                            key={c.id}
+                                                            className="ud-classroom-item"
+                                                            style={{ cursor: c.teacher?._id ? 'pointer' : 'default' }}
+                                                            onClick={() => c.teacher?._id && setSelectedTeacherId(c.teacher._id)}
+                                                        >
+                                                            <div className="ud-classroom-avatar" style={{ overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                                {c.teacher?.profileImage ? (
+                                                                    <img src={c.teacher.profileImage} alt={c.teacherName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                ) : (
+                                                                    c.name.charAt(0).toUpperCase()
+                                                                )}
+                                                            </div>
                                                             <div className="ud-classroom-info">
                                                                 <div className="ud-classroom-name">{c.name}</div>
-                                                                <div className="ud-classroom-teacher">{c.teacherName}</div>
+                                                                <div className="ud-classroom-teacher" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                    <span>Instructor: {c.teacherName}</span>
+                                                                    {c.teacher?._id && <span style={{ fontSize: '0.75rem', color: 'var(--color-accent)', textDecoration: 'underline' }}>(View Profile)</span>}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -896,7 +910,7 @@ const UserDashboard: React.FC = () => {
                                     </div>
                                     <div className="assessment-grid">
                                         {assessments.map(quiz => (
-                                            <AssessmentCard key={quiz._id} quiz={quiz} now={now} onStart={handleAttempt} onResults={scrollToResults} onViewTeacher={() => {}} />
+                                            <AssessmentCard key={quiz._id} quiz={quiz} now={now} onStart={handleAttempt} onResults={scrollToResults} onViewTeacher={(teacherId) => setSelectedTeacherId(teacherId)} />
                                         ))}
                                     </div>
                                 </>

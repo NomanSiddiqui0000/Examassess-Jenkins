@@ -5,6 +5,7 @@ import './TeacherProfileModal.css';
 interface TeacherProfileModalProps {
     teacherId: string;
     onClose: () => void;
+    isOpen?: boolean;
 }
 
 interface TeacherProfile {
@@ -25,17 +26,23 @@ interface TeacherProfile {
     };
 }
 
-const TeacherProfileModal: React.FC<TeacherProfileModalProps> = ({ teacherId, onClose }) => {
+const TeacherProfileModal: React.FC<TeacherProfileModalProps> = ({ teacherId, onClose, isOpen }) => {
     const [data, setData] = useState<TeacherProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
+        if (isOpen === false || !teacherId) return;
+        setLoading(true);
+        setError('');
+        setData(null);
         api.get(`/user/teacher-profile/${teacherId}`)
             .then(res => setData(res.data))
             .catch(err => setError(err.response?.data?.message || 'Failed to load profile'))
             .finally(() => setLoading(false));
-    }, [teacherId]);
+    }, [teacherId, isOpen]);
+
+    if (isOpen === false) return null;
 
     return (
         <div className="modal-overlay" onClick={onClose}>

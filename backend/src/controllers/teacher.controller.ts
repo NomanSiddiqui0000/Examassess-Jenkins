@@ -28,6 +28,7 @@ import {
     countNewTeacherStudentsForInvite,
     getTeacherResourceSnapshot,
 } from '../services/teacher-resource.service';
+import { filterTeacherPrivacy } from './teacher-profile.controller';
 import {
     createEmailVerificationToken,
     getUnverifiedAccountExpiry,
@@ -556,14 +557,15 @@ export const getTeacherDashboard = async (req: AuthRequest, res: Response) => {
     try {
         const teacherId = teacherIdOf(req);
         await refreshTeacherAssessmentStatuses(teacherId);
-        const [classrooms, students, assessments, questions, resources] = await Promise.all([
+        const [classrooms, students, assessments, questions, resources, userProfile] = await Promise.all([
             TeacherClassroom.countDocuments({ teacherId, status: 'active' }),
             ClassroomStudent.countDocuments({ teacherId, status: { $ne: 'removed' } }),
             TeacherAssessment.countDocuments({ teacherId, status: { $in: ['scheduled'] } }),
             TeacherQuestion.countDocuments({ teacherId }),
             getTeacherResourceSnapshot(teacherId),
+            User.findById(teacherId).select('profileImage professionalTitle organization subjects bio fullName email username').lean(),
         ]);
-        res.json({ classrooms, students, activeAssessments: assessments, teacherQuestions: questions, resources });
+        res.json({ classrooms, students, activeAssessments: assessments, teacherQuestions: questions, resources, profile: userProfile });
     } catch (error) {
         console.error('Teacher dashboard error:', error);
         res.status(500).json({ message: 'Server error' });
@@ -1192,7 +1194,7 @@ export const getTeacherQuestions = async (req: AuthRequest, res: Response) => {
         const page = Math.max(1, Number(req.query.page) || 1);
         const limit = Math.min(100, Math.max(10, Number(req.query.limit) || 25));
         const filter: any = { teacherId };
-        
+
         if (req.query.subject) filter.subject = new RegExp(`^${String(req.query.subject).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
         if (req.query.difficulty) filter.difficulty = new RegExp(`^${String(req.query.difficulty).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
         if (req.query.search) filter.questionText = { $regex: String(req.query.search), $options: 'i' };
@@ -1336,7 +1338,7 @@ export const deleteAssessment = async (req: AuthRequest, res: Response) => {
 
         const now = new Date();
         const isLive = assessment.startTime && assessment.endTime && now >= assessment.startTime && now <= assessment.endTime;
-        
+
         const activeAttempts = await AssessmentAttempt.countDocuments({
             assessmentId: assessment._id,
             status: { $in: ['started', 'in_progress'] }
@@ -2099,7 +2101,7 @@ export const getStudentClassroomAssessments = async (req: AuthRequest, res: Resp
         const classroomIds = enrollments.map((enrollment: any) => enrollment.classroomId);
         const assessments = await TeacherAssessment.find({ classroomId: { $in: classroomIds }, status: { $ne: 'archived' } })
             .populate('classroomId', 'name')
-            .populate('teacherId', 'fullName profileImage professionalTitle organization subjects bio')
+            .populate('teacherId', 'fullName profileImage professionalTitle organization subjects bio privacySettings')
             .sort({ startTime: 1 })
             .lean();
         const assessmentIds = assessments.map((assessment: any) => assessment._id);
@@ -2125,7 +2127,7 @@ export const getStudentClassroomAssessments = async (req: AuthRequest, res: Resp
                 _id: assessment._id,
                 title: assessment.name,
                 classroom: assessment.classroomId,
-                teacher: assessment.teacherId,
+                teacher: filterTeacherPrivacy(assessment.teacherId),
                 numberOfQuestions: assessment.totalQuestions,
                 duration: assessment.durationMinutes,
                 passingMarks: assessment.passingPercentage,
@@ -2165,27 +2167,27 @@ export const getStudentClassroomAssessments = async (req: AuthRequest, res: Resp
     }
 };
 
-                export const startStudentAssessment = async (req: AuthRequest, res: Response) => {
-                try {
-                await autoSubmitExpiredAttempts();
-                const studentId = new mongoose.Types.ObjectId(req.user!.id);
-                const assessment = await TeacherAssessment.findById(req.params.id);
-                if (!assessment) return res.status(404).json({ errorCode: 'QUIZ_NOT_FOUND', message: 'Assessment not found' });
-                const enrollment = await ClassroomStudent.findOne({ classroomId: assessment.classroomId, studentId, status: { $ne: 'removed' } });
-                if (!enrollment) return res.status(403).json({ errorCode: 'QUIZ_ACCESS_DENIED', message: 'You are not enrolled in this classroom' });
+export const startStudentAssessment = async (req: AuthRequest, res: Response) => {
+    try {
+        await autoSubmitExpiredAttempts();
+        const studentId = new mongoose.Types.ObjectId(req.user!.id);
+        const assessment = await TeacherAssessment.findById(req.params.id).populate('teacherId', 'fullName profileImage professionalTitle organization subjects bio privacySettings');
+        if (!assessment) return res.status(404).json({ errorCode: 'QUIZ_NOT_FOUND', message: 'Assessment not found' });
+        const enrollment = await ClassroomStudent.findOne({ classroomId: assessment.classroomId, studentId, status: { $ne: 'removed' } });
+        if (!enrollment) return res.status(403).json({ errorCode: 'QUIZ_ACCESS_DENIED', message: 'You are not enrolled in this classroom' });
 
-                const now = new Date();
-                if (now < assessment.startTime) return res.status(403).json({ errorCode: 'QUIZ_NOT_ACTIVE', message: 'Assessment has not started yet' });
-                if (now >= assessment.endTime) return res.status(403).json({ errorCode: 'QUIZ_NOT_ACTIVE', message: 'Assessment window is closed' });    
+        const now = new Date();
+        if (now < assessment.startTime) return res.status(403).json({ errorCode: 'QUIZ_NOT_ACTIVE', message: 'Assessment has not started yet' });
+        if (now >= assessment.endTime) return res.status(403).json({ errorCode: 'QUIZ_NOT_ACTIVE', message: 'Assessment window is closed' });
 
-                const existing = await AssessmentAttempt.findOne({
-                assessmentId: assessment._id,
-                studentId,
-                status: { $in: ['started', 'in_progress'] },
-                }).sort({ attemptNumber: -1 });
+        const existing = await AssessmentAttempt.findOne({
+            assessmentId: assessment._id,
+            studentId,
+            status: { $in: ['started', 'in_progress'] },
+        }).sort({ attemptNumber: -1 });
 
-                if (existing) {
-                return res.json({
+        if (existing) {
+            return res.json({
                 serverTime: now,
                 quiz: {
                     id: assessment._id,
@@ -2196,17 +2198,18 @@ export const getStudentClassroomAssessments = async (req: AuthRequest, res: Resp
                     totalMarks: existing.totalMarks || existing.questions.reduce((sum, q: any) => sum + q.marks, 0),
                     type: 'assessment',
                     allowedUntil: existing.allowedUntil,
+                    teacher: filterTeacherPrivacy(assessment.teacherId),
                 },
                 mcqs: existing.questions.map((q: any) => ({ _id: q.sourceQuestionId, questionText: q.questionText, options: q.options })),
                 startTime: existing.startedAt,
-                });
-                }
+            });
+        }
 
-                if (assessment.lateJoinPolicy === 'block' && now > assessment.startTime) {
-                return res.status(403).json({ errorCode: 'QUIZ_ACCESS_DENIED', message: 'Late joining is blocked for this assessment' });
-                }
+        if (assessment.lateJoinPolicy === 'block' && now > assessment.startTime) {
+            return res.status(403).json({ errorCode: 'QUIZ_ACCESS_DENIED', message: 'Late joining is blocked for this assessment' });
+        }
 
-                const attemptCount = await AssessmentAttempt.countDocuments({ assessmentId: assessment._id, studentId });
+        const attemptCount = await AssessmentAttempt.countDocuments({ assessmentId: assessment._id, studentId });
         if (attemptCount >= assessment.attemptLimit) {
             return res.status(403).json({ errorCode: 'QUIZ_ATTEMPT_LIMIT_REACHED', message: 'Attempt limit reached for this assessment' });
         }
@@ -2242,6 +2245,7 @@ export const getStudentClassroomAssessments = async (req: AuthRequest, res: Resp
                 totalMarks: attempt.totalMarks,
                 type: 'assessment',
                 allowedUntil,
+                teacher: filterTeacherPrivacy(assessment.teacherId),
             },
             mcqs: snapshot.map((q) => ({ _id: q.sourceQuestionId, questionText: q.questionText, options: q.options })),
             startTime: now,

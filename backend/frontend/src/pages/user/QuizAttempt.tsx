@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../utils/api';
+import TeacherProfileModal from '../../components/TeacherProfileModal';
 
 interface MCQ {
     _id: string;
@@ -18,6 +19,7 @@ interface QuizInfo {
     totalMarks: number;
     allowedUntil?: string;
     serverTime?: string;
+    teacher?: any;
 }
 
 const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
@@ -114,6 +116,7 @@ const QuizAttempt: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const submittedRef = useRef(false);
     const startedRef = useRef(false);
@@ -331,6 +334,35 @@ const QuizAttempt: React.FC = () => {
 
             {/* Body */}
             <div className="quiz-attempt-body">
+                {quiz.teacher && (
+                    <div className="card" style={{ gridColumn: '1 / -1', marginBottom: 20, background: 'var(--color-surface)', borderLeft: '4px solid var(--color-accent)', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                            <div style={{ width: '44px', height: '44px', borderRadius: '50%', overflow: 'hidden', background: 'var(--color-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem', flexShrink: 0 }}>
+                                {quiz.teacher.profileImage ? (
+                                    <img src={quiz.teacher.profileImage} alt={quiz.teacher.fullName || 'Instructor'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    (quiz.teacher.fullName || 'T').charAt(0).toUpperCase()
+                                )}
+                            </div>
+                            <div>
+                                <div style={{ fontWeight: 600, color: 'var(--color-text-primary)', fontSize: '1rem' }}>
+                                    Assessment Instructor: {quiz.teacher.fullName || 'Teacher'}
+                                </div>
+                                {quiz.teacher.professionalTitle && (
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                                        {quiz.teacher.professionalTitle} {quiz.teacher.organization ? `• ${quiz.teacher.organization}` : ''}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <button
+                            className="btn btn-outline btn-sm"
+                            onClick={() => setSelectedTeacherId(typeof quiz.teacher === 'string' ? quiz.teacher : quiz.teacher._id || quiz.teacher.id)}
+                        >
+                            View Profile
+                        </button>
+                    </div>
+                )}
                 {/* Question panel */}
                 <div className="quiz-question-panel">
                     <div className="quiz-question-card">
@@ -431,6 +463,11 @@ const QuizAttempt: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <TeacherProfileModal
+                teacherId={selectedTeacherId || ''}
+                isOpen={!!selectedTeacherId}
+                onClose={() => setSelectedTeacherId(null)}
+            />
         </div>
     );
 };

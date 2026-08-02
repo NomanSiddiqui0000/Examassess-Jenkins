@@ -1,0 +1,391 @@
+.teacher-leaderboard-container {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+}
+
+.leaderboard-header-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.leaderboard-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.leaderboard-title h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #1e293b);
+    margin: 0;
+}
+
+.leaderboard-title p {
+    color: var(--color-text-secondary, #64748b);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.leaderboard-filters {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: var(--color-surface, #ffffff);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-border, #e2e8f0);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: var(--color-text-secondary, #64748b);
+    font-size: 0.95rem;
+}
+
+.time-filter-pills {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--color-surface-2, #f1f5f9);
+    padding: 0.25rem;
+    border-radius: 8px;
+}
+
+.time-filter-pill {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text-secondary, #64748b);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.time-filter-pill.active {
+    background: var(--color-primary, #1a73e8);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
+}
+
+.time-filter-pill:hover:not(.active) {
+    background: var(--color-border, #e2e8f0);
+}
+
+/* Podium Section */
+.podium-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    min-height: 250px;
+}
+
+.podium-card {
+    background: var(--color-surface, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border, #e2e8f0);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease;
+    width: 200px;
+    position: relative;
+}
+
+.podium-card:hover {
+    transform: translateY(-5px);
+}
+
+.podium-card.rank-1 {
+    z-index: 3;
+    border-color: #fbbf24;
+    box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.3);
+    padding-bottom: 2.5rem;
+}
+
+.podium-card.rank-2 {
+    z-index: 2;
+    padding-bottom: 2rem;
+    border-color: #94a3b8;
+}
+
+.podium-card.rank-3 {
+    z-index: 1;
+    padding-bottom: 1.5rem;
+    border-color: #b45309;
+}
+
+.podium-medal {
+    font-size: 2.5rem;
+    position: absolute;
+    top: -20px;
+    background: var(--color-surface, #ffffff);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.podium-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 3px solid var(--color-primary, #1a73e8);
+}
+
+.rank-1 .podium-avatar { border-color: #fbbf24; }
+.rank-2 .podium-avatar { border-color: #94a3b8; }
+.rank-3 .podium-avatar { border-color: #b45309; }
+
+.podium-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #1e293b);
+    margin-bottom: 0.25rem;
+}
+
+.podium-score {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-primary, #1a73e8);
+}
+
+.podium-badge {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    background: var(--color-surface-2, #f1f5f9);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    color: var(--color-text-secondary, #64748b);
+    font-weight: 600;
+}
+
+/* Insights Section */
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.insight-card {
+    background: var(--color-surface, #ffffff);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border, #e2e8f0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.insight-label {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary, #64748b);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.insight-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #1e293b);
+}
+
+.insight-sub {
+    font-size: 0.85rem;
+    color: var(--color-primary, #1a73e8);
+    font-weight: 500;
+}
+
+/* Leaderboard Table */
+.leaderboard-table-container {
+    background: var(--color-surface, #ffffff);
+    border-radius: 12px;
+    border: 1px solid var(--color-border, #e2e8f0);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard-toolbar {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-border, #e2e8f0);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.leaderboard-search {
+    flex: 1;
+    min-width: 250px;
+}
+
+.leaderboard-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.leaderboard-table-responsive {
+    overflow-x: auto;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.leaderboard-table th {
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-secondary, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--color-border, #e2e8f0);
+    background: var(--color-surface-2, #f8fafc);
+    white-space: nowrap;
+}
+
+.leaderboard-table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-border, #e2e8f0);
+    vertical-align: middle;
+}
+
+.leaderboard-table tbody tr:hover {
+    background: var(--color-surface-2, #f8fafc);
+}
+
+.student-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.student-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-border, #e2e8f0);
+}
+
+.student-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.student-name {
+    font-weight: 600;
+    color: var(--color-text-primary, #1e293b);
+}
+
+.student-email {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #64748b);
+}
+
+.rank-cell {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-text-primary, #1e293b);
+    text-align: center;
+    width: 60px;
+}
+
+.score-cell {
+    font-weight: 700;
+    color: var(--color-primary, #1a73e8);
+    font-size: 1.05rem;
+}
+
+.trend-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+}
+
+.trend-up { color: #16a34a; }
+.trend-down { color: #dc2626; }
+.trend-stable { color: #64748b; }
+
+.achievement-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--color-accent-light, #fff7ed);
+    color: var(--color-accent, #ea580c);
+    border: 1px solid rgba(234, 88, 12, 0.2);
+    white-space: nowrap;
+}
+
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.25rem;
+    color: var(--color-text-primary, #1e293b);
+    margin: 0;
+}
+
+.empty-state p {
+    color: var(--color-text-secondary, #64748b);
+    max-width: 400px;
+}
+
+@media (max-width: 768px) {
+    .podium-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+    .podium-card {
+        width: 100%;
+        max-width: 300px;
+    }
+    .podium-card.rank-1, .podium-card.rank-2, .podium-card.rank-3 {
+        padding-bottom: 1.5rem;
+    }
+    .leaderboard-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

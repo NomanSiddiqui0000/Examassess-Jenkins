@@ -10,6 +10,10 @@ export default defineConfig({
                 target: 'http://localhost:5000',
                 changeOrigin: true,
             },
+            '/teacher-profiles': {
+                target: 'http://localhost:5000',
+                changeOrigin: true,
+            },
         },
     },
 });

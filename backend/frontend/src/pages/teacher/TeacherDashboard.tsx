@@ -6,11 +6,15 @@ import BackHomeButton from '../../components/BackHomeButton';
 import HomeLogoLink from '../../components/HomeLogoLink';
 import { DEFAULT_QUESTION_DIFFICULTY, QUESTION_DIFFICULTIES, QuestionDifficulty } from '../../constants/questionDifficulty';
 import TeacherProfileSection from './TeacherProfileSection';
+import TeacherProfileSetupPopup from '../../components/TeacherProfileSetupPopup';
+import { TeacherAccountSettings } from './TeacherAccountSettings';
+import TeacherLeaderboard from './TeacherLeaderboard';
+import { useToast } from '../../components/ToastContext';
 
-type TabKey = 'overview' | 'classrooms' | 'questions' | 'assessments' | 'students' | 'analytics' | 'profile';
+type TabKey = 'overview' | 'classrooms' | 'questions' | 'assessments' | 'students' | 'analytics' | 'leaderboard' | 'profile' | 'settings';
 type DistributionRow = { category: string; value: number | '' };
 type WorkflowState = 'complete' | 'current' | 'locked';
-type IconName = 'overview' | 'classrooms' | 'questions' | 'assessments' | 'students' | 'analytics' | 'logout' | 'menu' | 'close' | 'profile';
+type IconName = 'overview' | 'classrooms' | 'questions' | 'assessments' | 'students' | 'analytics' | 'leaderboard' | 'logout' | 'menu' | 'close' | 'profile' | 'settings' | 'user' | 'chevron-down';
 type AnalyticsTabKey = 'overview' | 'students' | 'quizzes' | 'topics' | 'questions' | 'attendance' | 'time' | 'classrooms';
 type ResultSortKey = 'name' | 'submittedAt' | 'score' | 'percentage' | 'timeTaken';
 
@@ -174,6 +178,8 @@ const Icon = ({ name }: { name: IconName }) => {
             return <svg viewBox="0 0 24 24" {...common}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>;
         case 'analytics':
             return <svg viewBox="0 0 24 24" {...common}><path d="M3 3v18h18" /><path d="M7 16v-5" /><path d="M12 16V7" /><path d="M17 16v-8" /></svg>;
+        case 'leaderboard':
+            return <svg viewBox="0 0 24 24" {...common}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" /><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" /></svg>;
         case 'logout':
             return <svg viewBox="0 0 24 24" {...common}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>;
         case 'menu':
@@ -182,6 +188,12 @@ const Icon = ({ name }: { name: IconName }) => {
             return <svg viewBox="0 0 24 24" {...common}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>;
         case 'profile':
             return <svg viewBox="0 0 24 24" {...common}><circle cx="12" cy="7" r="4" /><path d="M5.5 21v-2a6.5 6.5 0 0 1 13 0v2" /></svg>;
+        case 'settings':
+            return <svg viewBox="0 0 24 24" {...common}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>;
+        case 'user':
+            return <svg viewBox="0 0 24 24" {...common}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>;
+        case 'chevron-down':
+            return <svg viewBox="0 0 24 24" {...common}><path d="m6 9 6 6 6-6" /></svg>;
         default:
             return null;
     }
@@ -225,13 +237,30 @@ const formatDateTime = (value?: string) => {
 };
 
 const TeacherDashboard: React.FC = () => {
-    const { user, logout } = useAuth();
+    const { user, login, logout } = useAuth();
     const navigate = useNavigate();
     const [tab, setTab] = useState<TabKey>('overview');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const { showToast } = useToast();
+
+    useEffect(() => {
+        if (error) {
+            showToast(error, 'error');
+            setError('');
+        }
+    }, [error, showToast]);
+
+    useEffect(() => {
+        if (message) {
+            showToast(message, 'success');
+            setMessage('');
+        }
+    }, [message, showToast]);
+
+    const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
     const [dashboard, setDashboard] = useState<any>({});
     const [classrooms, setClassrooms] = useState<any[]>([]);
     const [selectedClassroomId, setSelectedClassroomId] = useState('');
@@ -492,6 +521,22 @@ const TeacherDashboard: React.FC = () => {
         }
     };
 
+    const refreshProfileData = async () => {
+        try {
+            const dashRes = await api.get('/teacher/dashboard');
+            setDashboard(dashRes.data);
+            if (dashRes.data?.profile) {
+                const p = dashRes.data.profile;
+                const token = localStorage.getItem('token');
+                if (token && user) {
+                    login(token, { ...user, ...p });
+                }
+            }
+        } catch (err) {
+            console.error('Failed to refresh dashboard profile', err);
+        }
+    };
+
     const loadAll = async () => {
         setLoading(true);
         try {
@@ -504,6 +549,13 @@ const TeacherDashboard: React.FC = () => {
                 api.get('/teacher/analytics/overview'),
             ]);
             setDashboard(dashRes.data);
+            if (dashRes.data?.profile) {
+                const p = dashRes.data.profile;
+                const token = localStorage.getItem('token');
+                if (token && user) {
+                    login(token, { ...user, ...p });
+                }
+            }
             setClassrooms(classRes.data);
             setQuestionAnalytics(qaRes.data);
             setAssessments(assessmentRes.data);
@@ -923,6 +975,22 @@ const TeacherDashboard: React.FC = () => {
     const assessmentCreditResource = teacherResources.credits?.assessment || {};
     const emailCreditResource = teacherResources.credits?.email || {};
     const resourceLimits = teacherResources.limits || {};
+
+    const isTrulyUnlimitedPlan = Boolean(
+        assessmentCreditResource.unlimited &&
+        resourceLimits.questions?.unlimited &&
+        resourceLimits.classrooms?.unlimited &&
+        resourceLimits.students?.unlimited &&
+        resourceLimits.assessments?.unlimited &&
+        emailCreditResource?.unlimited
+    );
+    const isAssessmentCreditExplicitlyLimited = !assessmentCreditResource.unlimited && assessmentCreditResource.remaining !== null && assessmentCreditResource.remaining !== undefined;
+    const effectiveAssessmentCapacity = isAssessmentCreditExplicitlyLimited
+        ? Number(assessmentCreditResource.remaining || 0) + Number(assessmentCreditResource.used || 0)
+        : Number(resourceLimits.questions?.max || 500);
+    const effectiveAssessmentRemaining = isAssessmentCreditExplicitlyLimited
+        ? Number(assessmentCreditResource.remaining || 0)
+        : Math.max(0, effectiveAssessmentCapacity - Number(assessmentCreditResource.used || 0));
     const acceptedInvitations = students.filter((row) => row.studentId?.emailVerified).length;
     const pendingInvitations = Math.max(0, students.length - acceptedInvitations);
     const assessmentParticipants = Number(selectedInvitationAssessment?.submittedCount || 0);
@@ -1298,7 +1366,9 @@ const TeacherDashboard: React.FC = () => {
         { key: 'assessments', label: 'Assessments', icon: 'assessments' },
         { key: 'students', label: 'Students', icon: 'students' },
         { key: 'analytics', label: 'Analytics', icon: 'analytics' },
+        { key: 'leaderboard', label: 'Leaderboard', icon: 'leaderboard' },
         { key: 'profile', label: 'My Profile', icon: 'profile' },
+        { key: 'settings', label: 'Account Settings', icon: 'settings' },
     ];
 
     return (
@@ -1332,6 +1402,7 @@ const TeacherDashboard: React.FC = () => {
                 </div>
             </aside>
             <div className="admin-main">
+                <TeacherProfileSetupPopup onComplete={() => setTab('profile')} />
                 <header className="admin-topbar">
                     <div className="topbar-left">
                         <BackHomeButton />
@@ -1340,24 +1411,81 @@ const TeacherDashboard: React.FC = () => {
                             <span className="topbar-subtitle">Manage classrooms, assessments and students.</span>
                         </div>
                     </div>
-                    <div className="topbar-user">
-                        <div className="topbar-avatar">{user?.fullName?.charAt(0) || user?.username?.charAt(0)}</div>
-                        <span className="topbar-username">{user?.fullName || user?.username}</span>
-                        <button className="btn btn-accent btn-sm" onClick={handleLogout}>Logout</button>
-                        <button className="topbar-menu-btn" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
+                    <div className="topbar-user" style={{ position: 'relative' }}>
+                        <div
+                            className="topbar-user-trigger"
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '6px 12px', borderRadius: '8px', transition: 'background 0.2s', background: showUserDropdown ? 'var(--color-surface-2, #f3f4f6)' : 'transparent' }}
+                            onClick={() => setShowUserDropdown(!showUserDropdown)}
+                            title="Account menu"
+                        >
+                            <div className="topbar-avatar" style={{ overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--color-primary, #1a73e8)', color: '#fff', fontWeight: 600 }}>
+                                {(dashboard?.profile?.profileImage || user?.profileImage) ? (
+                                    <img src={dashboard?.profile?.profileImage || user?.profileImage} alt={user?.fullName || 'Avatar'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    user?.fullName?.charAt(0) || user?.username?.charAt(0) || 'T'
+                                )}
+                            </div>
+                            <span className="topbar-username" style={{ fontWeight: 500, color: 'var(--color-text-primary, #1f2937)' }}>{user?.fullName || user?.username}</span>
+                            <span style={{ display: 'inline-flex', width: '16px', height: '16px', color: 'var(--color-text-secondary, #6b7280)', transition: 'transform 0.2s', transform: showUserDropdown ? 'rotate(180deg)' : 'none' }}><Icon name="chevron-down" /></span>
+                        </div>
+
+                        {showUserDropdown && (
+                            <>
+                                <div style={{ position: 'fixed', inset: 0, zIndex: 998 }} onClick={() => setShowUserDropdown(false)} />
+                                <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 8px)', width: '220px', background: '#ffffff', borderRadius: '10px', boxShadow: '0 10px 25px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.05)', border: '1px solid var(--color-border, #e5e7eb)', padding: '6px 0', zIndex: 999 }}>
+                                    <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--color-border, #f3f4f6)', marginBottom: '4px' }}>
+                                        <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.fullName || user?.username}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#6b7280', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email || 'Instructor Account'}</div>
+                                    </div>
+                                    <button
+                                        style={{ width: '100%', textAlign: 'left', padding: '10px 16px', background: 'none', border: 'none', fontSize: '0.875rem', color: '#374151', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
+                                        onClick={() => { setTab('profile'); setShowUserDropdown(false); }}
+                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    >
+                                        <span style={{ display: 'inline-flex', width: '18px', height: '18px', color: '#64748b' }}><Icon name="user" /></span> My Profile
+                                    </button>
+                                    <button
+                                        style={{ width: '100%', textAlign: 'left', padding: '10px 16px', background: 'none', border: 'none', fontSize: '0.875rem', color: '#374151', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
+                                        onClick={() => { setTab('settings'); setShowUserDropdown(false); }}
+                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    >
+                                        <span style={{ display: 'inline-flex', width: '18px', height: '18px', color: '#64748b' }}><Icon name="settings" /></span> Account Settings
+                                    </button>
+                                    <div style={{ height: '1px', background: 'var(--color-border, #f3f4f6)', margin: '4px 0' }} />
+                                    <button
+                                        style={{ width: '100%', textAlign: 'left', padding: '10px 16px', background: 'none', border: 'none', fontSize: '0.875rem', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 500 }}
+                                        onClick={() => { setShowUserDropdown(false); handleLogout(); }}
+                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'}
+                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    >
+                                        <span style={{ display: 'inline-flex', width: '18px', height: '18px', color: '#ef4444' }}><Icon name="logout" /></span> Logout
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                        <button className="topbar-menu-btn" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar" style={{ marginLeft: '8px' }}>
                             <Icon name="menu" />
                         </button>
                     </div>
                 </header>
                 <main className="admin-content">
-                    {message && <div className="alert alert-success">{message}</div>}
-                    {error && <div className="alert alert-error">{error}</div>}
                     {loading ? (
                         <div className="loading-overlay"><div className="loading-spinner" />Loading teacher workspace...</div>
                     ) : (
                         <>
                             {tab === 'overview' && (
                                 <div className="teacher-overview">
+                                    {(!dashboard?.profile?.professionalTitle || !dashboard?.profile?.organization) && (
+                                        <div className="alert alert-warning" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', backgroundColor: 'var(--color-warning-bg)', borderLeft: '4px solid #f59e0b', padding: '1rem 1.25rem' }}>
+                                            <div>
+                                                <strong style={{ display: 'block', color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>Your instructor profile is incomplete</strong>
+                                                <span style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>Add your title, organization, and photo so students can recognize you.</span>
+                                            </div>
+                                            <button className="btn btn-primary btn-sm" onClick={() => setTab('profile')}>Complete Profile</button>
+                                        </div>
+                                    )}
                                     <section className="teacher-workflow-hero">
                                         <div>
                                             <p className="teacher-kicker">Teacher Workspace</p>
@@ -1404,12 +1532,12 @@ const TeacherDashboard: React.FC = () => {
                                         <div className="teacher-resource-main">
                                             <div>
                                                 <p className="teacher-kicker">Assessment Credits</p>
-                                                <h2>{formatRemaining(assessmentCreditResource, 'Credits Remaining')}</h2>
+                                                <h2>{isTrulyUnlimitedPlan ? 'Unlimited' : `${formatResourceNumber(effectiveAssessmentRemaining)} Credits Remaining`}</h2>
                                                 <p>Assessment credits are consumed only when a student submission is successfully recorded.</p>
                                             </div>
                                             <div className="teacher-resource-badge">
                                                 <span>Capacity</span>
-                                                <strong>{assessmentCreditResource.unlimited ? 'Unlimited' : formatResourceNumber(assessmentCreditResource.estimatedRemainingCapacity)}</strong>
+                                                <strong>{isTrulyUnlimitedPlan ? 'Unlimited' : `${formatResourceNumber(effectiveAssessmentCapacity)} Credits`}</strong>
                                             </div>
                                         </div>
                                         <div className="teacher-resource-stats">
@@ -1933,7 +2061,11 @@ const TeacherDashboard: React.FC = () => {
                             )}
 
                             {tab === 'profile' && (
-                                <TeacherProfileSection />
+                                <TeacherProfileSection onProfileUpdate={refreshProfileData} />
+                            )}
+
+                            {tab === 'settings' && (
+                                <TeacherAccountSettings onProfileUpdate={refreshProfileData} userProfile={dashboard?.profile} />
                             )}
 
                             {tab === 'analytics' && (
@@ -1954,6 +2086,10 @@ const TeacherDashboard: React.FC = () => {
                                 ) : (
                                     renderAnalyticsContent()
                                 )
+                            )}
+
+                            {tab === 'leaderboard' && (
+                                <TeacherLeaderboard classrooms={classrooms} />
                             )}
                         </>
                     )}

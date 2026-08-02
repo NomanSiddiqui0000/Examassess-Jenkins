@@ -1,0 +1,426 @@
+/* TeacherAccountSettings.css - ExamAssess Design System */
+
+.account-settings-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 16px 24px 48px;
+    font-family: var(--font-family, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    color: #1e293b;
+}
+
+.account-settings-header {
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.account-settings-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.account-settings-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Modern Compact Toast Notification */
+.settings-toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    max-width: 380px;
+    width: max-content;
+    height: max-content;
+    animation: settingsToastSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settings-toast.success {
+    border-left: 4px solid #10b981;
+    color: #065f46;
+    background-color: #ffffff;
+}
+
+.settings-toast.error {
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+    background-color: #ffffff;
+}
+
+.settings-toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.settings-toast-close {
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    font-size: 16px;
+}
+
+.settings-toast-close:hover {
+    opacity: 1;
+}
+
+@keyframes settingsToastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Card Layout */
+.settings-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.settings-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+    border-color: #cbd5e1;
+}
+
+.settings-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.settings-card-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0;
+}
+
+.settings-card-header p {
+    font-size: 13px;
+    color: #64748b;
+    margin: 3px 0 0 0;
+}
+
+.settings-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: rgba(253, 106, 1, 0.1);
+    color: var(--color-accent, #FD6A01);
+    flex-shrink: 0;
+}
+
+/* Form Elements */
+.settings-form-group {
+    margin-bottom: 16px;
+}
+
+.settings-form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.settings-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 440px;
+}
+
+.settings-input-wrapper input {
+    width: 100%;
+    padding: 10px 38px 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+    color: #0f172a;
+    background-color: #ffffff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    box-sizing: border-box;
+}
+
+.settings-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--color-accent, #FD6A01);
+    box-shadow: 0 0 0 3px rgba(253, 106, 1, 0.15);
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.password-toggle-btn:hover {
+    color: #0f172a;
+}
+
+/* Password Strength Meter */
+.password-strength-container {
+    margin: -4px 0 16px 0;
+    max-width: 440px;
+}
+
+.password-strength-meter {
+    height: 4px;
+    background-color: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.password-strength-fill {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.password-strength-fill.weak {
+    width: 33%;
+    background-color: #ef4444;
+}
+
+.password-strength-fill.medium {
+    width: 66%;
+    background-color: #f97316;
+}
+
+.password-strength-fill.strong {
+    width: 100%;
+    background-color: #10b981;
+}
+
+.password-strength-label {
+    font-size: 11.5px;
+    margin-top: 4px;
+    display: block;
+    font-weight: 500;
+}
+
+.password-strength-label.weak {
+    color: #ef4444;
+}
+
+.password-strength-label.medium {
+    color: #f97316;
+}
+
+.password-strength-label.strong {
+    color: #10b981;
+}
+
+/* Info Grid */
+.settings-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.settings-info-item {
+    background: #f8fafc;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+}
+
+.settings-info-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.settings-info-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.status-badge.verified {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.unverified {
+    background-color: #fef9c3;
+    color: #854d0e;
+}
+
+/* Toggle Switch List */
+.settings-toggle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-toggle-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f8fafc;
+}
+
+.settings-toggle-item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.settings-toggle-info {
+    max-width: 80%;
+}
+
+.settings-toggle-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+
+.settings-toggle-desc {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Custom Modern Toggle Switch */
+.settings-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.settings-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.settings-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+}
+
+.settings-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+input:checked+.settings-slider {
+    background-color: var(--color-accent, #FD6A01);
+}
+
+input:checked+.settings-slider:before {
+    transform: translateX(20px);
+}
+
+@media (max-width: 640px) {
+    .account-settings-container {
+        padding: 16px;
+    }
+
+    .settings-card {
+        padding: 18px;
+    }
+
+    .settings-toggle-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .settings-toggle-info {
+        max-width: 100%;
+    }
+
+    .settings-input-wrapper,
+    .password-strength-container {
+        max-width: 100%;
+    }
+}

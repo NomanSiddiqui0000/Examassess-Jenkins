@@ -147,6 +147,7 @@ import {
     removeProfileImage,
     getPublicTeacherProfile,
 } from '../controllers/teacher-profile.controller';
+import { getClassroomLeaderboard } from '../controllers/teacher-leaderboard.controller';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -442,6 +443,7 @@ router.get('/teacher/classrooms/:id/students', authenticate, requireTeacher, get
 router.delete('/teacher/classrooms/:id/students/:studentId', authenticate, requireTeacher, removeClassroomStudent);
 router.post('/teacher/classrooms/:id/students/remove', authenticate, requireTeacher, removeClassroomStudents);
 router.get('/teacher/classrooms/:id/analytics', authenticate, requireTeacher, getClassroomAnalytics);
+router.get('/teacher/classrooms/:id/leaderboard', authenticate, requireTeacher, getClassroomLeaderboard);
 router.get('/teacher/analytics/overview', authenticate, requireTeacher, getTeacherAnalyticsOverview);
 router.get('/teacher/analytics/export', authenticate, requireTeacher, exportTeacherAnalytics);
 router.get('/teacher/templates/students', authenticate, requireTeacher, downloadStudentTemplate);
@@ -470,7 +472,7 @@ router.post('/teacher/profile/image', authenticate, requireTeacher, upload.singl
 router.delete('/teacher/profile/image', authenticate, requireTeacher, removeProfileImage);
 
 // ─── Public Teacher Profile Route (for students) ──────────────────────────────
-router.get('/user/teacher-profile/:teacherId', authenticate, requireUser, getPublicTeacherProfile);
+router.get('/user/teacher-profile/:teacherId', authenticate, getPublicTeacherProfile);
 
 export default router;
 

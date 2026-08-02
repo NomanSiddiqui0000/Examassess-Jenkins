@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { PERMISSIONS } from './context/AuthContext';
+import { ToastProvider } from './components/ToastContext';
 
 // Admin pages
 import AdminLogin from './pages/admin/AdminLogin';
@@ -43,239 +44,241 @@ import Homepage from './pages/Homepage';
 const App: React.FC = () => {
     return (
         <AuthProvider>
-            <BrowserRouter>
-                <Routes>
-                    {/* Default route — Homepage */}
-                    <Route path="/" element={<Homepage />} />
+            <ToastProvider>
+                <BrowserRouter>
+                    <Routes>
+                        {/* Default route — Homepage */}
+                        <Route path="/" element={<Homepage />} />
 
-                    {/* Convenience redirects */}
-                    <Route path="/login" element={<Navigate to="/user/login" replace />} />
-                    <Route path="/register" element={<Navigate to="/user/register" replace />} />
+                        {/* Convenience redirects */}
+                        <Route path="/login" element={<Navigate to="/user/login" replace />} />
+                        <Route path="/register" element={<Navigate to="/user/register" replace />} />
 
-                    {/* Admin auth */}
-                    <Route path="/admin/login" element={<AdminLogin />} />
-                    <Route path="/teacher/login" element={<TeacherLogin />} />
-                    <Route path="/teacher/register" element={<TeacherRegister />} />
-                    <Route
-                        path="/teacher/dashboard"
-                        element={
-                            <ProtectedRoute requiredRole="teacher">
-                                <TeacherDashboard />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Admin auth */}
+                        <Route path="/admin/login" element={<AdminLogin />} />
+                        <Route path="/teacher/login" element={<TeacherLogin />} />
+                        <Route path="/teacher/register" element={<TeacherRegister />} />
+                        <Route
+                            path="/teacher/dashboard"
+                            element={
+                                <ProtectedRoute requiredRole="teacher">
+                                    <TeacherDashboard />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Dashboard — super_admin + admin */}
-                    <Route
-                        path="/admin/dashboard"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.VIEW_DASHBOARD}>
-                                <AdminDashboard />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Dashboard — super_admin + admin */}
+                        <Route
+                            path="/admin/dashboard"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.VIEW_DASHBOARD}>
+                                    <AdminDashboard />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Student management — super_admin + admin */}
-                    <Route
-                        path="/admin/users"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_STUDENTS}>
-                                <UserManagement />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Student management — super_admin + admin */}
+                        <Route
+                            path="/admin/users"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_STUDENTS}>
+                                    <UserManagement />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* MCQ Bank — all admin roles */}
-                    <Route
-                        path="/admin/mcqs"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_MCQS}>
-                                <MCQBank />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* MCQ Bank — all admin roles */}
+                        <Route
+                            path="/admin/mcqs"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_MCQS}>
+                                    <MCQBank />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* MCQ Types — all admin roles */}
-                    <Route
-                        path="/admin/mcq-types"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_MCQS}>
-                                <MCQTypeManagement />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* MCQ Types — all admin roles */}
+                        <Route
+                            path="/admin/mcq-types"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_MCQS}>
+                                    <MCQTypeManagement />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Quizzes — super_admin + admin */}
-                    <Route
-                        path="/admin/quizzes"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_QUIZZES}>
-                                <QuizConfiguration />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Quizzes — super_admin + admin */}
+                        <Route
+                            path="/admin/quizzes"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_QUIZZES}>
+                                    <QuizConfiguration />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Results — super_admin + admin */}
-                    <Route
-                        path="/admin/results"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.VIEW_RESULTS}>
-                                <ResultsView />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Results — super_admin + admin */}
+                        <Route
+                            path="/admin/results"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.VIEW_RESULTS}>
+                                    <ResultsView />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Admin account management — super_admin only */}
-                    <Route
-                        path="/admin/admins"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_ADMINS}>
-                                <AdminManagement />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Admin account management — super_admin only */}
+                        <Route
+                            path="/admin/admins"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_ADMINS}>
+                                    <AdminManagement />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Teacher monitoring - super_admin only */}
-                    <Route
-                        path="/admin/teachers"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_ADMINS}>
-                                <TeacherManagement />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Teacher monitoring - super_admin only */}
+                        <Route
+                            path="/admin/teachers"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_ADMINS}>
+                                    <TeacherManagement />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Audit logs — super_admin only */}
-                    <Route
-                        path="/admin/audit-logs"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.VIEW_AUDIT_LOGS}>
-                                <AuditLogs />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Audit logs — super_admin only */}
+                        <Route
+                            path="/admin/audit-logs"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.VIEW_AUDIT_LOGS}>
+                                    <AuditLogs />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Test Categories — super_admin only */}
-                    <Route
-                        path="/admin/test-categories"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_ADMINS}>
-                                <TestCategoryManagement />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Test Categories — super_admin only */}
+                        <Route
+                            path="/admin/test-categories"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_ADMINS}>
+                                    <TestCategoryManagement />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Category Quiz Config — super_admin + admin */}
-                    <Route
-                        path="/admin/category-quiz-configs"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_QUIZZES}>
-                                <CategoryQuizConfigPage />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Category Quiz Config — super_admin + admin */}
+                        <Route
+                            path="/admin/category-quiz-configs"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_QUIZZES}>
+                                    <CategoryQuizConfigPage />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* My Account — super_admin only */}
-                    <Route
-                        path="/admin/me"
-                        element={
-                            <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_OWN_CREDENTIALS}>
-                                <MyAccount />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* My Account — super_admin only */}
+                        <Route
+                            path="/admin/me"
+                            element={
+                                <ProtectedRoute requiredRole="admin" requiredPermission={PERMISSIONS.MANAGE_OWN_CREDENTIALS}>
+                                    <MyAccount />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* User routes */}
-                    <Route path="/user/login" element={<UserLogin />} />
-                    <Route path="/user/register" element={<StudentRegister />} />
-                    <Route path="/verify-email" element={<VerifyEmail />} />
-                    <Route
-                        path="/verify-email-pending"
-                        element={
-                            <ProtectedRoute requiredRole="user" allowUnverified={true}>
-                                <VerifyEmailPending />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route
-                        path="/user/change-password"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <ChangePassword />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/user/dashboard"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <UserDashboard />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/user/quiz/:id"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <QuizAttempt />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/user/result"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <QuizResult />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/user/results"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <ResultsHistory />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/user/bookmarks"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <Bookmarks />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/user/mistakes"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <MistakeBook />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/user/reports"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <PerformanceReports />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/user/review/:resultId"
-                        element={
-                            <ProtectedRoute requiredRole="user">
-                                <AnswerReview />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* User routes */}
+                        <Route path="/user/login" element={<UserLogin />} />
+                        <Route path="/user/register" element={<StudentRegister />} />
+                        <Route path="/verify-email" element={<VerifyEmail />} />
+                        <Route
+                            path="/verify-email-pending"
+                            element={
+                                <ProtectedRoute requiredRole="user" allowUnverified={true}>
+                                    <VerifyEmailPending />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
+                        <Route
+                            path="/user/change-password"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <ChangePassword />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/user/dashboard"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <UserDashboard />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/user/quiz/:id"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <QuizAttempt />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/user/result"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <QuizResult />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/user/results"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <ResultsHistory />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/user/bookmarks"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <Bookmarks />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/user/mistakes"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <MistakeBook />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/user/reports"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <PerformanceReports />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/user/review/:resultId"
+                            element={
+                                <ProtectedRoute requiredRole="user">
+                                    <AnswerReview />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* 404 */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-            </BrowserRouter>
+                        {/* 404 */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </BrowserRouter>
+            </ToastProvider>
         </AuthProvider>
     );
 };

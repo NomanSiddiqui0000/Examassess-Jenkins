@@ -17,6 +17,29 @@ export interface User {
     credits?: number;
     modules?: UserModules;
     emailVerified?: boolean;
+    profileImage?: string;
+    professionalTitle?: string;
+    organization?: string;
+    subjects?: string;
+    bio?: string;
+    notificationPreferences?: NotificationPreferences;
+    privacySettings?: PrivacySettings;
+    memberSince?: string;
+    lastProfileUpdate?: string;
+}
+
+export interface NotificationPreferences {
+    emailOnStudentJoin: boolean;
+    emailOnAssessmentEnd: boolean;
+    emailOnAssessmentCreated: boolean;
+}
+
+export interface PrivacySettings {
+    showProfileImage: boolean;
+    showProfessionalTitle: boolean;
+    showOrganization: boolean;
+    showSubjects: boolean;
+    showBio: boolean;
 }
 
 export interface TestCategory {

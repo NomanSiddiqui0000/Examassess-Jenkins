@@ -39,8 +39,8 @@ app.get('/health', (req, res) => {
 
 // Serve frontend static files
 const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
-const teacherImagesPath = path.resolve(__dirname, '../teacher-images');
-app.use('/teacher-images', express.static(teacherImagesPath));
+const teacherProfilesPath = path.resolve(__dirname, '../teacher-profiles');
+app.use('/teacher-profiles', express.static(teacherProfilesPath));
 app.use(express.static(frontendDistPath));
 
 // Catch-all route to serve React app for non-API requests

@@ -9,6 +9,7 @@ import { StudentMistake } from '../models/StudentMistake';
 import { Result } from '../models/Result';
 import { AssessmentAttempt } from '../models/AssessmentAttempt';
 import { TeacherAssessment } from '../models/TeacherAssessment';
+import { filterTeacherPrivacy } from './teacher-profile.controller';
 
 /**
  * Aggregated student dashboard data endpoint.
@@ -89,7 +90,7 @@ export const getStudentDashboardData = async (req: AuthRequest, res: Response) =
         if (modules.teacherAssessments) {
             const enrollments = await ClassroomStudent.find({ studentId, status: { $ne: 'removed' } })
                 .populate('classroomId', 'name')
-                .populate('teacherId', 'fullName profileImage professionalTitle organization subjects bio')
+                .populate('teacherId', 'fullName profileImage professionalTitle organization subjects bio privacySettings')
                 .lean();
 
             const classroomIds = enrollments.map((e: any) => e.classroomId?._id).filter(Boolean);
@@ -127,7 +128,7 @@ export const getStudentDashboardData = async (req: AuthRequest, res: Response) =
                     id: e.classroomId?._id,
                     name: e.classroomId?.name || 'Classroom',
                     teacherName: e.teacherId?.fullName || 'Teacher',
-                    teacher: e.teacherId,
+                    teacher: filterTeacherPrivacy(e.teacherId),
                     status: e.status,
                     joinedAt: e.joinedAt,
                 })),

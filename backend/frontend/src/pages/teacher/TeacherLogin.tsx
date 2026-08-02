@@ -28,6 +28,8 @@ const TeacherLogin: React.FC = () => {
         setError('');
         try {
             const res = await api.post('/auth/teacher/login', { username, password });
+            sessionStorage.removeItem('profileSetupPrompted');
+            sessionStorage.removeItem('skipProfilePopup');
             login(res.data.token, res.data.user);
             navigate('/teacher/dashboard');
         } catch (err: any) {

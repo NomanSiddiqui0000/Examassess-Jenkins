@@ -6369,6 +6369,7 @@ tbody tr:hover td {
   font-weight: 500;
   white-space: nowrap;
 }
+
 /* ======================================================================
    TEACHER MODULE — RESPONSIVE OVERHAUL (FIXED)
    Target: Desktop (≥1200px) · Tablet (768px-1199px) · Mobile (≤767px)
@@ -6391,7 +6392,8 @@ tbody tr:hover td {
 table.data-table,
 table.admin-table {
   width: 100%;
-  min-width: max-content !important; /* Force columns to respect content width */
+  min-width: max-content !important;
+  /* Force columns to respect content width */
 }
 
 .table-wrapper th,
@@ -6402,7 +6404,8 @@ table.admin-table {
 .table-container td,
 .table-responsive td,
 .table-scroll-container td {
-  white-space: nowrap; /* Prevent text wrapping from squeezing columns */
+  white-space: nowrap;
+  /* Prevent text wrapping from squeezing columns */
 }
 
 /* ─── ISSUE 5: Targeted, Themed Scrollbars ─── */
@@ -6486,7 +6489,8 @@ table.admin-table {
 .invite-table-card,
 .tm-profile-card,
 .tm-resource-card {
-  min-width: 0 !important; /* Prevent flex blowout */
+  min-width: 0 !important;
+  /* Prevent flex blowout */
   max-width: 100%;
 }
 
@@ -6503,7 +6507,8 @@ table.admin-table {
 
 /* Base Topbar Fixes */
 .admin-topbar {
-  flex-wrap: nowrap !important; /* Force single row */
+  flex-wrap: nowrap !important;
+  /* Force single row */
   min-height: 72px;
   height: auto !important;
   align-items: center;
@@ -6596,7 +6601,7 @@ table.admin-table {
   .admin-content {
     padding: 20px;
   }
-  
+
   /* ISSUE 2: Forms - allow 2 columns on tablet */
   .form-grid,
   .form-grid-3,
@@ -6616,7 +6621,7 @@ table.admin-table {
   .teacher-workflow-steps {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
-  
+
   .grid-3,
   .quiz-analytics-grid,
   .teacher-results-stat-grid,
@@ -6637,22 +6642,25 @@ table.admin-table {
    BREAKPOINT: Mobile (≤767px)
    ====================================================================== */
 @media (max-width: 767px) {
-  
+
   /* ─── ISSUE 1: Mobile Header Single Row Fix ─── */
   .admin-topbar {
     padding: 0 16px;
     gap: 8px;
-    flex-direction: row; /* Keep single row */
+    flex-direction: row;
+    /* Keep single row */
     align-items: center;
   }
 
   .topbar-left {
     gap: 8px;
-    flex-wrap: nowrap; /* No wrapping */
+    flex-wrap: nowrap;
+    /* No wrapping */
   }
 
   .topbar-titles {
-    min-width: 0; /* Enable truncation */
+    min-width: 0;
+    /* Enable truncation */
   }
 
   .topbar-title {
@@ -6663,7 +6671,8 @@ table.admin-table {
   }
 
   .topbar-subtitle {
-    display: none; /* Hide subtitle on mobile to save space */
+    display: none;
+    /* Hide subtitle on mobile to save space */
   }
 
   .topbar-user {
@@ -6673,13 +6682,15 @@ table.admin-table {
     margin-top: 0;
     width: auto;
   }
-  
+
   .topbar-username {
-    display: none !important; /* Hide username on mobile */
+    display: none !important;
+    /* Hide username on mobile */
   }
 
   .topbar-menu-btn {
-    display: flex !important; /* Ensure hamburger shows unconditionally */
+    display: flex !important;
+    /* Ensure hamburger shows unconditionally */
   }
 
   .admin-sidebar {
@@ -6723,13 +6734,15 @@ table.admin-table {
 
   /* ─── Buttons (Touch Friendly) ─── */
   .btn {
-    min-height: 44px; /* Touch target size */
+    min-height: 44px;
+    /* Touch target size */
     font-size: 0.9rem;
     padding: 10px 16px;
-    white-space: normal; /* Don't clip button text */
+    white-space: normal;
+    /* Don't clip button text */
     text-align: center;
   }
-  
+
   .btn-sm {
     min-height: 38px;
   }
@@ -6772,7 +6785,7 @@ table.admin-table {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .teacher-header-actions .btn,
   .teacher-header-actions .form-select,
   .analytics-export-group .btn {
@@ -6787,7 +6800,8 @@ table.admin-table {
   .modal-overlay,
   .teacher-modal-backdrop {
     padding: 0;
-    align-items: flex-end; /* Bottom sheet style */
+    align-items: flex-end;
+    /* Bottom sheet style */
   }
 
   .modal,
@@ -6798,4 +6812,3 @@ table.admin-table {
     width: 100%;
   }
 }
-

@@ -75,7 +75,7 @@ pipeline {
 
                     echo 'Building latest Docker image...'
                     // Docker layer caching is utilized automatically by Docker daemon
-                    sh 'docker-compose build uniassess-app'
+                    sh 'docker compose build uniassess-app'
                 }
             }
         }
@@ -84,7 +84,7 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying ExamAssess via Docker Compose...'
-                    sh 'docker-compose up -d --remove-orphans uniassess-app'
+                    sh 'docker compose up -d --remove-orphans uniassess-app'
                 }
             }
         }
@@ -127,12 +127,12 @@ pipeline {
                 
                 // Print failure logs
                 echo '=== DOCKER LOGS ==='
-                sh 'docker-compose logs --tail=150 uniassess-app'
+                sh 'docker compose logs --tail=150 uniassess-app'
                 
                 // Rollback
                 echo 'Rolling back to previous working deployment...'
                 sh "docker tag ${BACKUP_IMAGE_NAME} ${IMAGE_NAME} || echo 'No previous image found for rollback.'"
-                sh 'docker-compose up -d --remove-orphans uniassess-app'
+                sh 'docker compose up -d --remove-orphans uniassess-app'
                 
                 echo 'Rollback complete. The application should be back online using the previous state.'
             }

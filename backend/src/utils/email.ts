@@ -122,8 +122,7 @@ async function sendMailWrapper(mailOptions: any): Promise<any> {
             const errorText = await response.text();
             throw new Error(`Brevo HTTP API Error: ${response.status} - ${errorText}`);
         }
-        
-        const data = await response.json();
+        const data: any = await response.json();
         return { messageId: data.messageId, response: '250 OK (via HTTP API)' };
     }
 

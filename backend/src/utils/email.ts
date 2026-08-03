@@ -23,7 +23,7 @@ function getSmtpConfig() {
         secure: secureEnv ? secureEnv === 'true' : port === 465,
         user: envValue('SMTP_USER', 'SMTP_USERNAME', 'BREVO_SMTP_USER', 'BREVO_SMTP_LOGIN'),
         pass: envValue('SMTP_PASS', 'SMTP_PASSWORD', 'BREVO_SMTP_PASS', 'BREVO_SMTP_KEY', 'BREVO_API_KEY'),
-        from: envValue('EMAIL_FROM', 'SMTP_FROM', 'BREVO_EMAIL_FROM') || 'ExamAssess <noreply@examassess.sslip.io>',
+        from: envValue('EMAIL_FROM', 'SMTP_FROM', 'BREVO_EMAIL_FROM') || 'Examassess <noreply@examassess.com>',
     };
 }
 
@@ -81,6 +81,56 @@ const escapeHtml = (value: unknown) => String(value ?? '')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
+function parseFromEmail(from: string) {
+    const match = from.match(/(.*)<(.+)>/);
+    if (match) {
+        return { name: match[1].trim(), email: match[2].trim() };
+    }
+    return { email: from.trim() };
+}
+
+async function sendMailWrapper(mailOptions: any): Promise<any> {
+    const smtp = getSmtpConfig();
+    
+    // If the password looks like a Brevo API Key (starts with xkeysib-), use the Brevo REST API
+    // This avoids SMTP port blocking on cloud providers and provides immediate errors 
+    // if the sender domain is not verified, preventing silent email drops.
+    if (smtp.pass && smtp.pass.startsWith('xkeysib-')) {
+        console.log('[Email] Using Brevo HTTP API for reliable delivery');
+        const fromInfo = parseFromEmail(mailOptions.from);
+        
+        const body: any = {
+            sender: fromInfo,
+            to: [{ email: mailOptions.to }],
+            subject: mailOptions.subject,
+        };
+        
+        if (mailOptions.html) body.htmlContent = mailOptions.html;
+        if (mailOptions.text) body.textContent = mailOptions.text;
+
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'api-key': smtp.pass,
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Brevo HTTP API Error: ${response.status} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        return { messageId: data.messageId, response: '250 OK (via HTTP API)' };
+    }
+
+    // Fallback to SMTP
+    return await getTransporter().sendMail(mailOptions);
+}
+
 /**
  * Send a verification email with a clickable link.
  * @param toEmail - recipient email address
@@ -129,7 +179,7 @@ export async function sendVerificationEmail(toEmail: string, token: string): Pro
     };
 
     try {
-        const info = await getTransporter().sendMail(mailOptions);
+        const info = await sendMailWrapper(mailOptions);
         console.log(`[Email] ✅ Verification email sent successfully to: ${toEmail}`);
         console.log(`[Email]    Message ID: ${info.messageId}`);
         console.log(`[Email]    Response: ${info.response}`);
@@ -151,7 +201,7 @@ export async function sendTestEmail(toEmail: string): Promise<{ success: boolean
     console.log(`[Email] Sending test email to: ${toEmail}`);
 
     try {
-        const info = await getTransporter().sendMail({
+        const info = await sendMailWrapper({
             from: getEmailFrom(),
             to: toEmail,
             subject: 'ExamAssess SMTP Test',
@@ -219,7 +269,7 @@ export async function sendPasswordResetEmail(toEmail: string, token: string): Pr
     };
 
     try {
-        const info = await getTransporter().sendMail(mailOptions);
+        const info = await sendMailWrapper(mailOptions);
         console.log(`[Email] ✅ Password reset email sent successfully to: ${toEmail}`);
         console.log(`[Email]    Message ID: ${info.messageId}`);
     } catch (error: any) {
@@ -352,7 +402,7 @@ export async function sendClassroomInvitationEmail(
     };
 
     try {
-        const info = await getTransporter().sendMail(mailOptions);
+        const info = await sendMailWrapper(mailOptions);
         console.log(`[Email] ✅ Classroom invitation sent to: ${toEmail}`);
         console.log(`[Email]    Message ID: ${info.messageId}`);
     } catch (error: any) {
@@ -376,7 +426,7 @@ export async function sendAssessmentReminderEmail(
         minutesBefore: number;
     }
 ): Promise<void> {
-    await getTransporter().sendMail({
+    await sendMailWrapper({
         from: getEmailFrom(),
         to: toEmail,
         subject: `Reminder: ${payload.assessmentName} starts soon`,

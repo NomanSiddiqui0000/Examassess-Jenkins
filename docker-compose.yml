@@ -25,7 +25,7 @@ services:
       - SMTP_SECURE=${SMTP_SECURE:-false}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
-      - EMAIL_FROM=${EMAIL_FROM:-ExamAssess <noreply@examassess.sslip.io>}
+      - EMAIL_FROM=${EMAIL_FROM:-Examassess <noreply@examassess.com>}
       # ─── Frontend URLs ───────────────────────────────────
       - FRONTEND_URL=${FRONTEND_URL:-https://examassess-exam-bt2dei-582625-34-153-65-85.sslip.io}
       - INVITATION_LOGIN_URL=${INVITATION_LOGIN_URL:-https://examassess-exam-bt2dei-582625-34-153-65-85.sslip.io/login}

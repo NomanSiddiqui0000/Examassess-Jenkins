@@ -8,23 +8,37 @@ interface UserLayoutProps {
     children: React.ReactNode;
 }
 
+// Cache state outside component to prevent layout flicker on route change
+let cachedModules: any = null;
+let cachedEmailVerified: boolean | null = null;
+
 const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const [modules, setModules] = useState({
-        practiceModule: user?.modules?.practiceModule ?? true,
-        teacherAssessments: user?.modules?.teacherAssessments ?? false,
+    
+    const [modules, setModules] = useState(() => {
+        if (cachedModules) return cachedModules;
+        return {
+            practiceModule: user?.modules?.practiceModule ?? true,
+            teacherAssessments: user?.modules?.teacherAssessments ?? false,
+        };
     });
-    const [emailVerified, setEmailVerified] = useState(user?.emailVerified ?? false);
+    
+    const [emailVerified, setEmailVerified] = useState(() => {
+        if (cachedEmailVerified !== null) return cachedEmailVerified;
+        return user?.emailVerified ?? false;
+    });
 
     // Fetch profile to get latest module and verification state
     useEffect(() => {
         api.get('/user/profile')
             .then((res) => {
                 if (res.data.modules) {
+                    cachedModules = res.data.modules;
                     setModules(res.data.modules);
                 }
                 if (res.data.emailVerified !== undefined) {
+                    cachedEmailVerified = res.data.emailVerified;
                     setEmailVerified(res.data.emailVerified);
                 }
             })

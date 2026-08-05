@@ -137,7 +137,7 @@ textarea {
 }
 
 .sidebar-brand-logo {
-  height: 44px;
+  height: 70px;
   width: auto;
   flex-shrink: 0;
   object-fit: contain;
@@ -399,7 +399,7 @@ textarea {
 }
 
 .user-topbar-logo {
-  height: 40px;
+  height: 65px;
   width: auto;
   object-fit: contain;
 }
@@ -1077,7 +1077,7 @@ tbody tr:hover td {
 
 .status-inactive {
   background: var(--color-danger-bg);
-  color: var(--color-danger);
+  color: #dc2626;
 }
 
 /* ===== MODAL ===== */
@@ -1206,8 +1206,9 @@ tbody tr:hover td {
 }
 
 .login-brand-logo {
-  width: 80px;
-  height: 80px;
+  width: auto;
+  height: 110px;
+  object-fit: contain;
   margin: 0 auto 24px;
 }
 
@@ -1436,7 +1437,7 @@ tbody tr:hover td {
 }
 
 .login-card-logo {
-  height: 72px;
+  height: 110px;
   width: auto;
   margin: 0 auto 16px;
   display: block;
@@ -1903,7 +1904,7 @@ tbody tr:hover td {
 }
 
 .login-brand-logo {
-  height: 96px;
+  height: 110px;
   width: auto;
   margin: 0 auto 20px;
   display: block;
@@ -1911,14 +1912,14 @@ tbody tr:hover td {
 }
 
 .sidebar-brand-logo {
-  height: 44px;
+  height: 70px;
   width: auto;
   flex-shrink: 0;
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.3));
 }
 
 .user-topbar-logo {
-  height: 40px;
+  height: 65px;
   width: auto;
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.15));
 }

@@ -835,6 +835,8 @@ const TeacherDashboard: React.FC = () => {
                 .map((row) => ({ category: row.category, subject: row.category, value: Number(row.value) }));
             const payload = {
                 ...assessmentForm,
+                assessmentStartTimeIso: startTime.toISOString(),
+                assessmentEndTimeIso: endTime.toISOString(),
                 durationMinutes: Number(assessmentForm.durationMinutes),
                 passingPercentage: Number(assessmentForm.passingPercentage),
                 attemptLimit: Number(assessmentForm.attemptLimit),

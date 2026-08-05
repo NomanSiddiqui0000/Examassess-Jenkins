@@ -374,6 +374,12 @@ async function assertTeacherClassroom(teacherId: mongoose.Types.ObjectId, classr
 }
 
 function parseAssessmentSchedule(body: any) {
+    if (body.assessmentStartTimeIso && body.assessmentEndTimeIso) {
+        return {
+            startTime: new Date(body.assessmentStartTimeIso),
+            endTime: new Date(body.assessmentEndTimeIso)
+        };
+    }
     const startTime = new Date(`${body.assessmentDate}T${body.assessmentStartTime}`);
     const endTime = new Date(`${body.assessmentDate}T${body.assessmentEndTime}`);
     return { startTime, endTime };

@@ -27,5 +27,5 @@ services:
       - SMTP_PASS=${SMTP_PASS}
       - EMAIL_FROM=${EMAIL_FROM:-Examassess <noreply@examassess.com>}
       # ─── Frontend URLs ───────────────────────────────────
-      - FRONTEND_URL=${FRONTEND_URL:-http://192.168.1.192:5000}
-      - INVITATION_LOGIN_URL=${INVITATION_LOGIN_URL:-http://192.168.1.192:5000/login}
+      - FRONTEND_URL=${FRONTEND_URL:-https://examassess.com}
+      - INVITATION_LOGIN_URL=${INVITATION_LOGIN_URL:-https://examassess.com/login}

@@ -2358,6 +2358,201 @@ tbody tr:hover td {
   margin: 0;
 }
 
+.teacher-step-state.locked {
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.workflow-gate {
+  max-width: 760px;
+  margin: 28px auto;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 54px 1fr auto;
+  align-items: center;
+  gap: 18px;
+}
+
+.workflow-gate-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-md);
+  background: rgba(253, 106, 1, 0.12);
+  color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.workflow-gate-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.workflow-gate h2 {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+  color: var(--color-primary);
+}
+
+.workflow-gate p {
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+}
+
+.teacher-resource-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-accent);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  padding: 22px;
+}
+
+.teacher-resource-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.teacher-resource-main h2 {
+  color: var(--color-primary);
+  font-size: 1.55rem;
+  margin: 4px 0 6px;
+}
+
+.teacher-resource-main p {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  max-width: 640px;
+}
+
+.teacher-resource-badge {
+  min-width: 170px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: rgba(13, 47, 105, 0.06);
+  border: 1px solid rgba(13, 47, 105, 0.12);
+  text-align: right;
+}
+
+.teacher-resource-badge span,
+.teacher-resource-stats span,
+.teacher-resource-limit span {
+  color: var(--color-text-secondary);
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.teacher-resource-badge strong {
+  color: var(--color-primary);
+  display: block;
+  font-size: 1.35rem;
+  margin-top: 4px;
+}
+
+.teacher-resource-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.teacher-resource-stats div {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 13px;
+}
+
+.teacher-resource-stats strong {
+  color: var(--color-text-primary);
+  display: block;
+  font-size: 1.05rem;
+  margin-top: 4px;
+}
+
+.teacher-resource-limits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.teacher-resource-limit {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 13px;
+}
+
+.teacher-resource-limit strong {
+  color: var(--color-primary);
+  display: block;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+.teacher-resource-meter {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-surface-2);
+  margin-top: 10px;
+}
+
+.teacher-resource-meter span {
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  display: block;
+  height: 100%;
+  min-width: 0;
+}
+
+.teacher-section-header {
+  align-items: flex-start;
+}
+
+.invite-workflow {
+  gap: 18px;
+}
+
+.invite-hero,
+.invite-control-card,
+.invite-assessment-summary,
+.invite-action-card,
+.invite-metrics-card,
+.invite-result-card,
+.invite-table-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.invite-hero {
+  align-items: center;
+  border-left: 5px solid var(--color-accent);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 28px;
+}
+
+.invite-hero h2 {
+  color: var(--color-primary);
+  font-size: 1.45rem;
+  margin: 4px 0 6px;
+}
+
+.invite-hero p {
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
 .invite-hero-status {
   background: rgba(13, 47, 105, 0.06);
   border: 1px solid rgba(13, 47, 105, 0.12);
@@ -2370,7 +2565,11 @@ tbody tr:hover td {
 .invite-summary-grid span,
 .invite-progress-grid span,
 .invite-metrics-card span,
-.invite-control-card p,
+.invite-control-card p {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+}
+
 .invite-card-header p {
   color: var(--color-text-secondary);
   font-size: 0.82rem;
@@ -2430,12 +2629,21 @@ tbody tr:hover td {
   padding: 20px;
 }
 
-.invite-summary-header,
+.invite-summary-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
 .invite-card-header {
   align-items: flex-start;
   display: flex;
   gap: 16px;
   justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .invite-summary-header span:first-child {
@@ -2487,14 +2695,17 @@ tbody tr:hover td {
 
 .invite-action-grid {
   display: grid;
-  gap: 16px;
+  gap: 24px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .invite-action-card,
 .invite-result-card,
 .invite-table-card {
-  padding: 18px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
 }
 
 .invite-form {
